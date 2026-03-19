@@ -1,0 +1,1744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Golf Course Conditions</title>
+  <style>
+    :root {
+      --bg-1: #0a1620;
+      --bg-2: #10202c;
+      --bg-3: #183427;
+      --panel: rgba(11, 23, 32, 0.82);
+      --panel-2: rgba(17, 32, 42, 0.92);
+      --line: rgba(255, 255, 255, 0.08);
+      --line-2: rgba(214, 184, 108, 0.22);
+      --text: #f3f6f8;
+      --muted: #aab9c5;
+      --muted-2: #8ea1b0;
+      --gold: #d6b86c;
+      --gold-2: #f0daa0;
+      --green: #74b470;
+      --green-2: #8fd28b;
+      --navy: #112433;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+      --radius-xl: 30px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --radius-sm: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 18%, rgba(214, 184, 108, 0.14), transparent 22%),
+        radial-gradient(circle at 85% 16%, rgba(116, 180, 112, 0.12), transparent 18%),
+        radial-gradient(circle at 50% 85%, rgba(214, 184, 108, 0.08), transparent 25%),
+        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 42%, var(--bg-3) 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 36px 36px;
+      opacity: 0.07;
+      pointer-events: none;
+    }
+
+    .page-shell {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .glow {
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(80px);
+      pointer-events: none;
+      opacity: 0.55;
+    }
+
+    .glow.one {
+      width: 300px;
+      height: 300px;
+      top: -80px;
+      right: -70px;
+      background: rgba(214, 184, 108, 0.16);
+    }
+
+    .glow.two {
+      width: 340px;
+      height: 340px;
+      bottom: 40px;
+      left: -100px;
+      background: rgba(116, 180, 112, 0.12);
+    }
+
+    .glow.three {
+      width: 240px;
+      height: 240px;
+      top: 52%;
+      right: 18%;
+      background: rgba(90, 152, 255, 0.08);
+    }
+
+    .hero-wrap {
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 26px 22px 10px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 34px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background:
+        linear-gradient(140deg, rgba(15, 31, 45, 0.96) 0%, rgba(15, 44, 35, 0.92) 55%, rgba(17, 32, 42, 0.96) 100%);
+      box-shadow: var(--shadow);
+      min-height: 330px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.9fr;
+      gap: 18px;
+      padding: 34px;
+      isolation: isolate;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto auto -120px -120px;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(214, 184, 108, 0.16), transparent 66%);
+      z-index: -1;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 2;
+      padding-right: 10px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--gold-2);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 18px rgba(214, 184, 108, 0.55);
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 64px);
+      line-height: 0.98;
+      letter-spacing: -0.045em;
+      max-width: 760px;
+    }
+
+    .hero p {
+      margin: 18px 0 0;
+      font-size: 16px;
+      line-height: 1.72;
+      color: #d4e0e7;
+      max-width: 710px;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .hero-badge {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      border-radius: 999px;
+      padding: 10px 14px;
+      color: #eef6fb;
+      font-size: 13px;
+      font-weight: 700;
+      backdrop-filter: blur(14px);
+    }
+
+    .hero-art {
+      position: relative;
+      display: flex;
+      justify-content: flex-end;
+      align-items: stretch;
+      min-height: 260px;
+    }
+
+    .scene-card {
+      width: 100%;
+      max-width: 470px;
+      border-radius: 28px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 16px 36px rgba(0,0,0,0.26);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+    }
+
+    .scene-card svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      min-height: 260px;
+    }
+
+    .hero-chip-stack {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .floating-chip {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(10, 22, 32, 0.64);
+      color: #f4f7f9;
+      border-radius: 999px;
+      padding: 9px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      backdrop-filter: blur(14px);
+    }
+
+    .app {
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 16px 22px 34px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.12fr 0.88fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: var(--panel);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+    }
+
+    .form-panel {
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-panel::before {
+      content: "";
+      position: absolute;
+      top: -60px;
+      right: -80px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(214,184,108,0.12), transparent 65%);
+      pointer-events: none;
+    }
+
+    .feed-panel {
+      padding: 24px;
+      position: sticky;
+      top: 18px;
+    }
+
+    .panel-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 26px;
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+      font-weight: 800;
+    }
+
+    .panel-subtitle {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+      max-width: 560px;
+    }
+
+    .step-chip {
+      border-radius: 999px;
+      padding: 10px 14px;
+      white-space: nowrap;
+      color: #fff3d0;
+      font-size: 12px;
+      font-weight: 800;
+      background: rgba(214, 184, 108, 0.12);
+      border: 1px solid rgba(214,184,108,0.24);
+      box-shadow: 0 8px 24px rgba(214, 184, 108, 0.08);
+    }
+
+    .progress-wrap {
+      margin: 16px 0 26px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 11px;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .progress-bar {
+      width: 10%;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--green), var(--gold), var(--gold-2));
+      box-shadow: 0 0 24px rgba(214,184,108,0.32);
+      transition: width 0.28s ease;
+    }
+
+    .success-banner,
+    .error-banner {
+      display: none;
+      margin-bottom: 14px;
+      border-radius: 18px;
+      padding: 14px 16px;
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.5;
+    }
+
+    .success-banner {
+      background: rgba(116,180,112,0.15);
+      border: 1px solid rgba(116,180,112,0.24);
+      color: #e4f7e1;
+    }
+
+    .error-banner {
+      background: rgba(255,100,100,0.12);
+      border: 1px solid rgba(255,100,100,0.22);
+      color: #ffd9d9;
+    }
+
+    .step {
+      display: none;
+      animation: fadeSlide 0.22s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step.active {
+      display: block;
+    }
+
+    @keyframes fadeSlide {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .step-title {
+      margin: 0 0 8px;
+      font-size: 29px;
+      letter-spacing: -0.045em;
+      line-height: 1.02;
+      font-weight: 800;
+    }
+
+    .step-desc {
+      margin: 0 0 22px;
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.68;
+      max-width: 660px;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 9px;
+      font-size: 12px;
+      color: #c8d4de;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-weight: 800;
+    }
+
+    .field small {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted-2);
+      line-height: 1.5;
+      font-size: 13px;
+    }
+
+    .text-input,
+    .text-area,
+    .mini-select {
+      width: 100%;
+      outline: none;
+      font-size: 15px;
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.09);
+      background: rgba(255,255,255,0.055);
+      border-radius: 18px;
+      padding: 16px 18px;
+      transition: 0.18s ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+    }
+
+    .text-input::placeholder,
+    .text-area::placeholder {
+      color: #93a8b7;
+    }
+
+    .text-input:focus,
+    .text-area:focus,
+    .mini-select:focus {
+      border-color: rgba(214,184,108,0.36);
+      box-shadow: 0 0 0 4px rgba(214,184,108,0.08);
+    }
+
+    .text-area {
+      min-height: 128px;
+      resize: vertical;
+      line-height: 1.7;
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .form-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .rating-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .rating-btn {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      border-radius: 20px;
+      color: var(--text);
+      padding: 18px 10px;
+      cursor: pointer;
+      transition: 0.18s ease;
+      min-height: 84px;
+      text-align: center;
+    }
+
+    .rating-btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(214,184,108,0.26);
+      background: rgba(214,184,108,0.08);
+    }
+
+    .rating-btn.selected {
+      background: linear-gradient(180deg, rgba(214,184,108,0.17), rgba(214,184,108,0.08));
+      border-color: rgba(214,184,108,0.46);
+      box-shadow: 0 12px 24px rgba(214,184,108,0.1);
+    }
+
+    .rating-number {
+      display: block;
+      font-size: 24px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .rating-word {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tag-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .tag {
+      padding: 12px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #f0f5f8;
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.08);
+      cursor: pointer;
+      transition: 0.18s ease;
+      user-select: none;
+    }
+
+    .tag:hover {
+      transform: translateY(-1px);
+      background: rgba(214,184,108,0.08);
+      border-color: rgba(214,184,108,0.24);
+    }
+
+    .tag.active {
+      background: linear-gradient(180deg, rgba(214,184,108,0.18), rgba(214,184,108,0.1));
+      border-color: rgba(214,184,108,0.42);
+      color: #fff5db;
+      box-shadow: 0 10px 24px rgba(214,184,108,0.08);
+    }
+
+    .helper-card {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      border-radius: 20px;
+      padding: 16px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .review-card {
+      display: grid;
+      gap: 16px;
+    }
+
+    .review-box {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.045);
+      border-radius: 22px;
+      padding: 18px;
+    }
+
+    .review-box h4 {
+      margin: 0 0 10px;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #c8d4de;
+    }
+
+    .review-main {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin-bottom: 8px;
+    }
+
+    .review-meta {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .review-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .score-card {
+      border-radius: 20px;
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.045);
+    }
+
+    .score-card .k {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-weight: 800;
+    }
+
+    .score-card .v {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .nav-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 26px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 16px;
+      padding: 14px 20px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.18s ease;
+      min-width: 112px;
+    }
+
+    .btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .btn-primary {
+      color: #11202b;
+      background: linear-gradient(135deg, var(--gold), var(--gold-2));
+      box-shadow: 0 12px 26px rgba(214,184,108,0.18);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+    }
+
+    .btn-secondary {
+      color: var(--text);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.09);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: rgba(255,255,255,0.09);
+    }
+
+    .btn-ghost {
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .btn-ghost:hover:not(:disabled) {
+      color: var(--text);
+      border-color: rgba(255,255,255,0.12);
+    }
+
+    .feed-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .feed-count {
+      border-radius: 999px;
+      background: rgba(214,184,108,0.12);
+      border: 1px solid rgba(214,184,108,0.22);
+      color: #fff1c7;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .feed-list {
+      display: grid;
+      gap: 14px;
+      max-height: 1060px;
+      overflow: auto;
+      padding-right: 2px;
+    }
+
+    .feed-item {
+      border: 1px solid rgba(255,255,255,0.08);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.03));
+      border-radius: 24px;
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feed-item::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      background: linear-gradient(180deg, var(--green), var(--gold));
+      opacity: 0.92;
+    }
+
+    .feed-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 14px;
+    }
+
+    .course {
+      font-size: 20px;
+      line-height: 1.1;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      padding-left: 8px;
+    }
+
+    .sub {
+      padding-left: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    .score-pill {
+      border-radius: 999px;
+      padding: 10px 14px;
+      color: #fff2cd;
+      font-size: 14px;
+      font-weight: 900;
+      background: linear-gradient(135deg, rgba(214,184,108,0.2), rgba(214,184,108,0.11));
+      border: 1px solid rgba(214,184,108,0.26);
+      white-space: nowrap;
+    }
+
+    .poster-line {
+      margin: 0 0 12px 8px;
+      color: #d6e2e9;
+      font-size: 13px;
+      line-height: 1.6;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .mini-chip {
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.07);
+      color: #e9f1f6;
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .mini-stat {
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.045);
+      padding: 12px;
+      text-align: center;
+    }
+
+    .mini-stat .l {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin-bottom: 7px;
+      font-weight: 800;
+    }
+
+    .mini-stat .n {
+      font-size: 21px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .notes {
+      padding-left: 8px;
+      color: #dce6ec;
+      font-size: 14px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .empty-state {
+      border: 1px dashed rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.035);
+      border-radius: 22px;
+      padding: 34px 20px;
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .foot-note {
+      margin-top: 16px;
+      color: var(--muted-2);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 1180px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .feed-panel {
+        position: static;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-art {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .hero-wrap,
+      .app {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .hero,
+      .form-panel,
+      .feed-panel {
+        padding: 20px;
+      }
+
+      .form-grid-2,
+      .form-grid-3,
+      .review-grid,
+      .mini-stats,
+      .rating-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .step-title {
+        font-size: 24px;
+      }
+
+      .hero h1 {
+        line-height: 1.02;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <div class="glow one"></div>
+    <div class="glow two"></div>
+    <div class="glow three"></div>
+
+    <section class="hero-wrap">
+      <div class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow">
+            <span class="eyebrow-dot"></span>
+            Live Conditions · Golf Intel
+          </div>
+
+          <h1>Post a round like a modern golf app.</h1>
+
+          <p>
+            Smooth step-by-step course condition reporting with a premium golf feel.
+            Keep the fast, futuristic vibe, but make it feel built for golfers.
+          </p>
+
+          <div class="hero-badges">
+            <div class="hero-badge">Course Conditions</div>
+            <div class="hero-badge">Player Profile</div>
+            <div class="hero-badge">Live Feed</div>
+            <div class="hero-badge">Golf-First Design</div>
+          </div>
+        </div>
+
+        <div class="hero-art">
+          <div class="scene-card">
+            <svg viewBox="0 0 900 560" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <defs>
+                <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#143047"/>
+                  <stop offset="55%" stop-color="#1a4d3d"/>
+                  <stop offset="100%" stop-color="#1c5d3c"/>
+                </linearGradient>
+
+                <linearGradient id="hill1" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#234c34"/>
+                  <stop offset="100%" stop-color="#2c7346"/>
+                </linearGradient>
+
+                <linearGradient id="hill2" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#1b3a29"/>
+                  <stop offset="100%" stop-color="#3a8050"/>
+                </linearGradient>
+
+                <linearGradient id="goldGlow" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#f0daa0" stop-opacity="0.9"/>
+                  <stop offset="100%" stop-color="#d6b86c" stop-opacity="0.25"/>
+                </linearGradient>
+              </defs>
+
+              <rect width="900" height="560" fill="url(#sky)"/>
+
+              <circle cx="740" cy="110" r="58" fill="url(#goldGlow)" opacity="0.95"/>
+              <circle cx="740" cy="110" r="96" fill="#d6b86c" opacity="0.06"/>
+
+              <path d="M0 318 C110 264, 214 256, 308 286 C400 315, 500 316, 620 270 C709 236, 796 238, 900 282 L900 560 L0 560 Z" fill="url(#hill1)" />
+              <path d="M0 358 C92 331, 176 338, 270 370 C355 399, 465 398, 562 351 C654 306, 771 298, 900 341 L900 560 L0 560 Z" fill="url(#hill2)" />
+
+              <path d="M0 410 C118 390, 196 432, 309 438 C450 447, 559 395, 677 407 C769 416, 835 450, 900 465 L900 560 L0 560 Z" fill="#173324" />
+
+              <ellipse cx="602" cy="384" rx="150" ry="58" fill="#97d28c" opacity="0.93"/>
+              <ellipse cx="602" cy="384" rx="78" ry="25" fill="#bde8b6" opacity="0.55"/>
+
+              <path d="M592 382 L592 258" stroke="#f8f0d7" stroke-width="4"/>
+              <path d="M592 258 C617 260, 638 274, 650 296 C626 296, 604 290, 592 280 Z" fill="#f5484b"/>
+
+              <path d="M700 235 C720 225, 733 219, 748 208 C755 203, 768 201, 780 208 C771 218, 767 224, 763 238 C756 266, 758 282, 772 300 C781 313, 795 320, 816 327 C810 338, 797 342, 778 343 C748 346, 715 335, 694 315 C672 295, 663 264, 670 239 Z" fill="#0e2030" opacity="0.86"/>
+
+              <circle cx="668" cy="247" r="9" fill="#f0daa0"/>
+              <path d="M670 256 C680 289, 684 317, 684 350" stroke="#0e2030" stroke-width="10" stroke-linecap="round"/>
+              <path d="M684 292 C705 302, 721 313, 735 326" stroke="#0e2030" stroke-width="8" stroke-linecap="round"/>
+              <path d="M682 292 C665 307, 653 320, 643 340" stroke="#0e2030" stroke-width="8" stroke-linecap="round"/>
+              <path d="M684 350 C699 385, 707 415, 715 455" stroke="#0e2030" stroke-width="10" stroke-linecap="round"/>
+              <path d="M683 350 C669 384, 664 414, 660 452" stroke="#0e2030" stroke-width="10" stroke-linecap="round"/>
+
+              <rect x="36" y="38" width="214" height="70" rx="18" fill="rgba(8,17,25,0.45)" stroke="rgba(255,255,255,0.08)"/>
+              <text x="60" y="67" fill="#f4f7f9" font-size="16" font-family="Inter, Arial, sans-serif" font-weight="800">GOLF CONDITIONS</text>
+              <text x="60" y="91" fill="#d6e2ea" font-size="13" font-family="Inter, Arial, sans-serif">Course reports · player intel · live feed</text>
+            </svg>
+
+            <div class="hero-chip-stack">
+              <div class="floating-chip">Augusta vibe</div>
+              <div class="floating-chip">Pebble mood</div>
+              <div class="floating-chip">AI-style polish</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main class="app">
+      <div class="layout">
+        <section class="panel form-panel">
+          <div class="panel-top">
+            <div>
+              <h2 class="panel-title">Post a Round</h2>
+              <p class="panel-subtitle">
+                Same smooth multi-step flow, but with player profile details and a more golf-first experience.
+              </p>
+            </div>
+            <div class="step-chip" id="stepChip">Step 1 of 9</div>
+          </div>
+
+          <div class="success-banner" id="successBanner">
+            Round submitted successfully.
+          </div>
+
+          <div class="error-banner" id="errorBanner">
+            Something went wrong. Make sure your backend is still running on http://127.0.0.1:8000
+          </div>
+
+          <div class="progress-wrap">
+            <div class="progress-meta">
+              <span id="progressLabel">Player Profile</span>
+              <span id="progressPercent">11%</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-bar" id="progressBar"></div>
+            </div>
+          </div>
+
+          <!-- STEP 0 -->
+          <div class="step active" data-step="0">
+            <h3 class="step-title">Who played this round?</h3>
+            <p class="step-desc">
+              Start with the golfer profile so the post feels personal and useful. These details keep the current backend untouched and will be saved inside the round notes.
+            </p>
+
+            <div class="form-grid-2">
+              <div class="field">
+                <label for="playerName">Name</label>
+                <input id="playerName" class="text-input" placeholder="Ex: Quemars Azizi" />
+              </div>
+
+              <div class="field">
+                <label for="handicap">Handicap</label>
+                <input id="handicap" class="text-input" placeholder="Ex: 5.2" />
+              </div>
+            </div>
+
+            <div class="form-grid-3">
+              <div class="field">
+                <label for="age">Age</label>
+                <input id="age" class="text-input" placeholder="Ex: 22" />
+              </div>
+
+              <div class="field">
+                <label for="typicalScore">Typical Score</label>
+                <input id="typicalScore" class="text-input" placeholder="Ex: 76-82" />
+              </div>
+
+              <div class="field">
+                <label for="homeCourse">Home Course</label>
+                <input id="homeCourse" class="text-input" placeholder="Ex: Callippe Preserve" />
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="field">
+                <label for="city">City</label>
+                <input id="city" class="text-input" placeholder="Ex: Stockton" />
+              </div>
+
+              <div class="field">
+                <label for="state">State</label>
+                <input id="state" class="text-input" placeholder="Ex: CA" />
+              </div>
+            </div>
+
+            <div class="helper-card">
+              Tip: “Typical Score” is the field for what they usually shoot. That gives context to how strong the conditions feedback is without changing your backend structure.
+            </div>
+          </div>
+
+          <!-- STEP 1 -->
+          <div class="step" data-step="1">
+            <h3 class="step-title">Which course did you play?</h3>
+            <p class="step-desc">
+              Use the full course name so the feed stays clean and easy to skim.
+            </p>
+
+            <div class="field">
+              <label for="course">Course Name</label>
+              <input id="course" class="text-input" placeholder="Ex: Pebble Beach Golf Links, Callippe Preserve, TPC Harding Park" />
+              <small>This still powers the main course field in your backend exactly like before.</small>
+            </div>
+          </div>
+
+          <!-- STEP 2 -->
+          <div class="step" data-step="2">
+            <h3 class="step-title">How were the greens?</h3>
+            <p class="step-desc">
+              Think roll, speed, smoothness, and consistency.
+            </p>
+            <div class="rating-grid" data-rating-group="greens"></div>
+          </div>
+
+          <!-- STEP 3 -->
+          <div class="step" data-step="3">
+            <h3 class="step-title">How were the fairways?</h3>
+            <p class="step-desc">
+              Rate coverage, condition, and overall quality.
+            </p>
+            <div class="rating-grid" data-rating-group="fairways"></div>
+          </div>
+
+          <!-- STEP 4 -->
+          <div class="step" data-step="4">
+            <h3 class="step-title">How was the pace of play?</h3>
+            <p class="step-desc">
+              Rate how smooth the round moved from start to finish.
+            </p>
+            <div class="rating-grid" data-rating-group="pace"></div>
+          </div>
+
+          <!-- STEP 5 -->
+          <div class="step" data-step="5">
+            <h3 class="step-title">Add more course condition detail</h3>
+            <p class="step-desc">
+              These extra fields make the post feel much more complete, while still keeping the current backend untouched.
+            </p>
+
+            <div class="form-grid-3">
+              <div class="field">
+                <label for="teeBoxes">Tee Boxes</label>
+                <select id="teeBoxes" class="mini-select">
+                  <option value="">Select</option>
+                  <option>1 - Poor</option>
+                  <option>2 - Below Average</option>
+                  <option>3 - Solid</option>
+                  <option>4 - Great</option>
+                  <option>5 - Elite</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="bunkers">Bunkers</label>
+                <select id="bunkers" class="mini-select">
+                  <option value="">Select</option>
+                  <option>1 - Poor</option>
+                  <option>2 - Below Average</option>
+                  <option>3 - Solid</option>
+                  <option>4 - Great</option>
+                  <option>5 - Elite</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="rough">Rough</label>
+                <select id="rough" class="mini-select">
+                  <option value="">Select</option>
+                  <option>1 - Poor</option>
+                  <option>2 - Below Average</option>
+                  <option>3 - Solid</option>
+                  <option>4 - Great</option>
+                  <option>5 - Elite</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 6 -->
+          <div class="step" data-step="6">
+            <h3 class="step-title">Choose quick condition tags</h3>
+            <p class="step-desc">
+              Tap any tags that describe what the course felt like today.
+            </p>
+
+            <div class="tag-wrap" id="tagWrap">
+              <div class="tag" data-tag="Windy">Windy</div>
+              <div class="tag" data-tag="Wet">Wet</div>
+              <div class="tag" data-tag="Firm">Firm</div>
+              <div class="tag" data-tag="Soft">Soft</div>
+              <div class="tag" data-tag="Fast Greens">Fast Greens</div>
+              <div class="tag" data-tag="Slow Greens">Slow Greens</div>
+              <div class="tag" data-tag="Cart Path Only">Cart Path Only</div>
+              <div class="tag" data-tag="Busy">Busy</div>
+              <div class="tag" data-tag="Freshly Punched">Freshly Punched</div>
+              <div class="tag" data-tag="Great Shape">Great Shape</div>
+              <div class="tag" data-tag="Tournament Feel">Tournament Feel</div>
+              <div class="tag" data-tag="Scorable">Scorable</div>
+            </div>
+          </div>
+
+          <!-- STEP 7 -->
+          <div class="step" data-step="7">
+            <h3 class="step-title">Any notes from the round?</h3>
+            <p class="step-desc">
+              Add anything golfers would want to know before they head out there.
+            </p>
+
+            <div class="field">
+              <label for="notes">Round Notes</label>
+              <textarea id="notes" class="text-area" placeholder="Ex: Greens rolled pure, bunkers were slightly compact, pace stayed solid all morning, and the course was in really good shape."></textarea>
+            </div>
+          </div>
+
+          <!-- STEP 8 -->
+          <div class="step" data-step="8">
+            <h3 class="step-title">Review and submit</h3>
+            <p class="step-desc">
+              Final check before your round goes live in the conditions feed.
+            </p>
+
+            <div class="review-card">
+              <div class="review-box">
+                <h4>Player</h4>
+                <div class="review-main" id="reviewPlayer">—</div>
+                <div class="review-meta" id="reviewPlayerMeta">—</div>
+              </div>
+
+              <div class="review-box">
+                <h4>Course</h4>
+                <div class="review-main" id="reviewCourse">—</div>
+                <div class="review-meta" id="reviewTags">No tags selected yet.</div>
+              </div>
+
+              <div class="review-grid">
+                <div class="score-card">
+                  <div class="k">Greens</div>
+                  <div class="v" id="reviewGreens">—</div>
+                </div>
+                <div class="score-card">
+                  <div class="k">Fairways</div>
+                  <div class="v" id="reviewFairways">—</div>
+                </div>
+                <div class="score-card">
+                  <div class="k">Pace</div>
+                  <div class="v" id="reviewPace">—</div>
+                </div>
+              </div>
+
+              <div class="review-box">
+                <h4>Extra Details</h4>
+                <div class="review-meta" id="reviewExtras">No extra details yet.</div>
+              </div>
+
+              <div class="review-box">
+                <h4>Notes</h4>
+                <div class="review-meta" id="reviewNotes">No notes added yet.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="nav-row">
+            <button class="btn btn-ghost" id="resetBtn" type="button">Reset</button>
+
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+              <button class="btn btn-secondary" id="backBtn" type="button">Back</button>
+              <button class="btn btn-primary" id="nextBtn" type="button">Next</button>
+            </div>
+          </div>
+        </section>
+
+        <aside class="panel feed-panel">
+          <div class="feed-top">
+            <div>
+              <h2 class="panel-title">Recent Conditions</h2>
+              <p class="panel-subtitle">
+                Live course reports with player context packed into each post.
+              </p>
+            </div>
+            <div class="feed-count" id="feedCount">0 Posts</div>
+          </div>
+
+          <div class="feed-list" id="rounds">
+            <div class="empty-state">
+              No rounds posted yet. Submit the first course conditions report.
+            </div>
+          </div>
+
+          <div class="foot-note">
+            This version keeps your existing backend behavior the same. The extra player and course details are packed into notes so the app still works with the exact routes you already built.
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const totalSteps = 9;
+    let currentStep = 0;
+
+    const stepNames = [
+      "Player Profile",
+      "Course",
+      "Greens",
+      "Fairways",
+      "Pace",
+      "Extra Conditions",
+      "Tags",
+      "Notes",
+      "Review"
+    ];
+
+    const formData = {
+      playerName: "",
+      handicap: "",
+      age: "",
+      typicalScore: "",
+      homeCourse: "",
+      city: "",
+      state: "",
+      course: "",
+      greens: null,
+      fairways: null,
+      pace: null,
+      teeBoxes: "",
+      bunkers: "",
+      rough: "",
+      tags: [],
+      notes: ""
+    };
+
+    const ratingWords = {
+      1: "Poor",
+      2: "Below Avg",
+      3: "Solid",
+      4: "Great",
+      5: "Elite"
+    };
+
+    function qs(id) {
+      return document.getElementById(id);
+    }
+
+    function setBanner(type, message = "") {
+      const success = qs("successBanner");
+      const error = qs("errorBanner");
+
+      success.style.display = "none";
+      error.style.display = "none";
+
+      if (type === "success") {
+        success.textContent = message || "Round submitted successfully.";
+        success.style.display = "block";
+      }
+
+      if (type === "error") {
+        error.textContent = message || "Something went wrong. Make sure your backend is still running on http://127.0.0.1:8000";
+        error.style.display = "block";
+      }
+    }
+
+    function hideBanners() {
+      qs("successBanner").style.display = "none";
+      qs("errorBanner").style.display = "none";
+    }
+
+    function buildRatingGroup(groupName) {
+      const container = document.querySelector(`[data-rating-group="${groupName}"]`);
+      container.innerHTML = "";
+
+      for (let i = 1; i <= 5; i++) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "rating-btn";
+        btn.innerHTML = `
+          <span class="rating-number">${i}</span>
+          <span class="rating-word">${ratingWords[i]}</span>
+        `;
+
+        btn.addEventListener("click", () => {
+          formData[groupName] = i;
+          [...container.querySelectorAll(".rating-btn")].forEach(b => b.classList.remove("selected"));
+          btn.classList.add("selected");
+        });
+
+        container.appendChild(btn);
+      }
+    }
+
+    buildRatingGroup("greens");
+    buildRatingGroup("fairways");
+    buildRatingGroup("pace");
+
+    document.querySelectorAll(".tag").forEach(tag => {
+      tag.addEventListener("click", () => {
+        const value = tag.dataset.tag;
+        tag.classList.toggle("active");
+
+        if (formData.tags.includes(value)) {
+          formData.tags = formData.tags.filter(t => t !== value);
+        } else {
+          formData.tags.push(value);
+        }
+      });
+    });
+
+    function collectFields() {
+      formData.playerName = qs("playerName").value.trim();
+      formData.handicap = qs("handicap").value.trim();
+      formData.age = qs("age").value.trim();
+      formData.typicalScore = qs("typicalScore").value.trim();
+      formData.homeCourse = qs("homeCourse").value.trim();
+      formData.city = qs("city").value.trim();
+      formData.state = qs("state").value.trim();
+      formData.course = qs("course").value.trim();
+      formData.teeBoxes = qs("teeBoxes").value;
+      formData.bunkers = qs("bunkers").value;
+      formData.rough = qs("rough").value;
+      formData.notes = qs("notes").value.trim();
+    }
+
+    function validateStep() {
+      collectFields();
+
+      if (currentStep === 0) {
+        if (!formData.playerName) {
+          setBanner("error", "Please enter the player name.");
+          return false;
+        }
+      }
+
+      if (currentStep === 1 && !formData.course) {
+        setBanner("error", "Please enter the course name.");
+        return false;
+      }
+
+      if (currentStep === 2 && !formData.greens) {
+        setBanner("error", "Please rate the greens.");
+        return false;
+      }
+
+      if (currentStep === 3 && !formData.fairways) {
+        setBanner("error", "Please rate the fairways.");
+        return false;
+      }
+
+      if (currentStep === 4 && !formData.pace) {
+        setBanner("error", "Please rate the pace of play.");
+        return false;
+      }
+
+      hideBanners();
+      return true;
+    }
+
+    function updateProgress() {
+      const percent = Math.round(((currentStep + 1) / totalSteps) * 100);
+      qs("progressBar").style.width = `${percent}%`;
+      qs("progressPercent").textContent = `${percent}%`;
+      qs("progressLabel").textContent = stepNames[currentStep];
+      qs("stepChip").textContent = `Step ${currentStep + 1} of ${totalSteps}`;
+
+      document.querySelectorAll(".step").forEach((step, index) => {
+        step.classList.toggle("active", index === currentStep);
+      });
+
+      qs("backBtn").style.visibility = currentStep === 0 ? "hidden" : "visible";
+      qs("nextBtn").textContent = currentStep === totalSteps - 1 ? "Submit Round" : "Next";
+    }
+
+    function updateReview() {
+      collectFields();
+
+      const playerMetaParts = [];
+      if (formData.handicap) playerMetaParts.push(`Handicap: ${formData.handicap}`);
+      if (formData.age) playerMetaParts.push(`Age: ${formData.age}`);
+      if (formData.typicalScore) playerMetaParts.push(`Typical Score: ${formData.typicalScore}`);
+      if (formData.homeCourse) playerMetaParts.push(`Home Course: ${formData.homeCourse}`);
+      if (formData.city || formData.state) {
+        playerMetaParts.push(`Location: ${[formData.city, formData.state].filter(Boolean).join(", ")}`);
+      }
+
+      qs("reviewPlayer").textContent = formData.playerName || "—";
+      qs("reviewPlayerMeta").textContent = playerMetaParts.length ? playerMetaParts.join(" · ") : "No extra player details.";
+
+      qs("reviewCourse").textContent = formData.course || "—";
+      qs("reviewGreens").textContent = formData.greens ?? "—";
+      qs("reviewFairways").textContent = formData.fairways ?? "—";
+      qs("reviewPace").textContent = formData.pace ?? "—";
+
+      qs("reviewTags").textContent =
+        formData.tags.length > 0
+          ? `Tags: ${formData.tags.join(", ")}`
+          : "No tags selected yet.";
+
+      const extras = [
+        formData.teeBoxes ? `Tee Boxes: ${formData.teeBoxes}` : null,
+        formData.bunkers ? `Bunkers: ${formData.bunkers}` : null,
+        formData.rough ? `Rough: ${formData.rough}` : null
+      ].filter(Boolean);
+
+      qs("reviewExtras").textContent = extras.length ? extras.join(" · ") : "No extra details yet.";
+      qs("reviewNotes").textContent = formData.notes || "No notes added yet.";
+    }
+
+    function buildPackedNotes() {
+      const sections = [];
+
+      const profile = [
+        formData.playerName ? `Name: ${formData.playerName}` : null,
+        formData.handicap ? `Handicap: ${formData.handicap}` : null,
+        formData.age ? `Age: ${formData.age}` : null,
+        formData.typicalScore ? `Typical Score: ${formData.typicalScore}` : null,
+        formData.homeCourse ? `Home Course: ${formData.homeCourse}` : null,
+        formData.city || formData.state ? `Location: ${[formData.city, formData.state].filter(Boolean).join(", ")}` : null
+      ].filter(Boolean);
+
+      const extraConditions = [
+        formData.teeBoxes ? `Tee Boxes: ${formData.teeBoxes}` : null,
+        formData.bunkers ? `Bunkers: ${formData.bunkers}` : null,
+        formData.rough ? `Rough: ${formData.rough}` : null
+      ].filter(Boolean);
+
+      if (profile.length) sections.push(`[Player] ${profile.join(" | ")}`);
+      if (extraConditions.length) sections.push(`[Extra Conditions] ${extraConditions.join(" | ")}`);
+      if (formData.tags.length) sections.push(`[Tags] ${formData.tags.join(", ")}`);
+      if (formData.notes) sections.push(`[Notes] ${formData.notes}`);
+
+      return sections.join("\n");
+    }
+
+    function resetForm(hideBanner = true) {
+      formData.playerName = "";
+      formData.handicap = "";
+      formData.age = "";
+      formData.typicalScore = "";
+      formData.homeCourse = "";
+      formData.city = "";
+      formData.state = "";
+      formData.course = "";
+      formData.greens = null;
+      formData.fairways = null;
+      formData.pace = null;
+      formData.teeBoxes = "";
+      formData.bunkers = "";
+      formData.rough = "";
+      formData.tags = [];
+      formData.notes = "";
+
+      qs("playerName").value = "";
+      qs("handicap").value = "";
+      qs("age").value = "";
+      qs("typicalScore").value = "";
+      qs("homeCourse").value = "";
+      qs("city").value = "";
+      qs("state").value = "";
+      qs("course").value = "";
+      qs("teeBoxes").value = "";
+      qs("bunkers").value = "";
+      qs("rough").value = "";
+      qs("notes").value = "";
+
+      document.querySelectorAll(".rating-btn").forEach(btn => btn.classList.remove("selected"));
+      document.querySelectorAll(".tag").forEach(tag => tag.classList.remove("active"));
+
+      currentStep = 0;
+      updateProgress();
+
+      if (hideBanner) {
+        hideBanners();
+      }
+    }
+
+    async function submitRound() {
+      collectFields();
+      hideBanners();
+
+      const payload = {
+        course: formData.course,
+        greens: Number(formData.greens),
+        fairways: Number(formData.fairways),
+        pace: Number(formData.pace),
+        notes: buildPackedNotes()
+      };
+
+      const nextBtn = qs("nextBtn");
+      nextBtn.disabled = true;
+      nextBtn.textContent = "Submitting...";
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/round", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText || "Submit failed");
+        }
+
+        resetForm(false);
+        setBanner("success", "Round submitted successfully.");
+        await loadRounds();
+      } catch (error) {
+        console.error(error);
+        setBanner("error", "Submit failed. Make sure your backend server is still running on http://127.0.0.1:8000");
+      } finally {
+        nextBtn.disabled = false;
+        updateProgress();
+      }
+    }
+
+    qs("nextBtn").addEventListener("click", async () => {
+      if (!validateStep()) return;
+
+      if (currentStep === totalSteps - 1) {
+        await submitRound();
+        return;
+      }
+
+      currentStep++;
+      if (currentStep === totalSteps - 1) {
+        updateReview();
+      }
+      updateProgress();
+    });
+
+    qs("backBtn").addEventListener("click", () => {
+      hideBanners();
+      if (currentStep > 0) {
+        currentStep--;
+        updateProgress();
+      }
+    });
+
+    qs("resetBtn").addEventListener("click", () => {
+      resetForm();
+    });
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function parsePackedNotes(rawNotes) {
+      const safe = rawNotes || "";
+      const lines = safe.split("\n").map(line => line.trim()).filter(Boolean);
+
+      const parsed = {
+        player: "",
+        extra: "",
+        tags: "",
+        notes: ""
+      };
+
+      lines.forEach(line => {
+        if (line.startsWith("[Player]")) parsed.player = line.replace("[Player]", "").trim();
+        else if (line.startsWith("[Extra Conditions]")) parsed.extra = line.replace("[Extra Conditions]", "").trim();
+        else if (line.startsWith("[Tags]")) parsed.tags = line.replace("[Tags]", "").trim();
+        else if (line.startsWith("[Notes]")) parsed.notes = line.replace("[Notes]", "").trim();
+      });
+
+      return parsed;
+    }
+
+    async function loadRounds() {
+      const res = await fetch("http://127.0.0.1:8000/rounds");
+      const data = await res.json();
+
+      const div = qs("rounds");
+      qs("feedCount").textContent = `${data.length} ${data.length === 1 ? "Post" : "Posts"}`;
+
+      div.innerHTML = "";
+
+      if (!data.length) {
+        div.innerHTML = `
+          <div class="empty-state">
+            No rounds posted yet. Submit the first course conditions report.
+          </div>
+        `;
+        return;
+      }
+
+      data.forEach(r => {
+        const parsed = parsePackedNotes(r.notes || "");
+        const playerChips = [];
+
+        if (parsed.player) {
+          const profileParts = parsed.player.split("|").map(p => p.trim()).filter(Boolean);
+
+          profileParts.forEach(part => {
+            if (
+              part.startsWith("Name:") ||
+              part.startsWith("Handicap:") ||
+              part.startsWith("Typical Score:")
+            ) {
+              playerChips.push(part);
+            }
+          });
+        }
+
+        div.innerHTML += `
+          <div class="feed-item">
+            <div class="feed-head">
+              <div>
+                <div class="course">${escapeHtml(r.course)}</div>
+                <div class="sub">Live course conditions report</div>
+              </div>
+              <div class="score-pill">⭐ ${escapeHtml(r.score)}</div>
+            </div>
+
+            ${
+              playerChips.length
+                ? `<div class="poster-line">${playerChips.map(chip => `<span class="mini-chip">${escapeHtml(chip)}</span>`).join("")}</div>`
+                : ``
+            }
+
+            <div class="mini-stats">
+              <div class="mini-stat">
+                <div class="l">Greens</div>
+                <div class="n">${escapeHtml(r.greens)}</div>
+              </div>
+              <div class="mini-stat">
+                <div class="l">Fairways</div>
+                <div class="n">${escapeHtml(r.fairways)}</div>
+              </div>
+              <div class="mini-stat">
+                <div class="l">Pace</div>
+                <div class="n">${escapeHtml(r.pace)}</div>
+              </div>
+            </div>
+
+            <div class="notes">${
+              escapeHtml(parsed.notes || r.notes || "No notes provided.")
+            }</div>
+          </div>
+        `;
+      });
+    }
+
+    updateProgress();
+    loadRounds();
+  </script>
+</body>
+</html>
